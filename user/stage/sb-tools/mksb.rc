@@ -1,0 +1,46 @@
+freebsd_env_hook() {
+	case "$SB_PROJECT" in
+	FreeBSD|freebsd) ;;
+	*) return 0;;
+	esac
+
+	SB_SRC=$SB/src
+	SB_OBJROOT=$SB/obj/
+	SRCTOP="${SB_SRC}"
+	OBJROOT="${SB_OBJROOT}"
+	OBJTOP='${OBJROOT}${TARGET}.${TARGET_ARCH}'
+	MAKESYSPATH=$SRCTOP/share/mk
+	MAKEOBJDIR='${.CURDIR:S,${SRCTOP},${OBJTOP},}'
+	WITH_META_MODE=yes
+	WITH_CCACHE_MODE=yes
+
+	add_hooks mksb_env_finish_hooks freebsd_env_finish_hook
+}
+freebsd_env_finish_hook() {
+	expShellVars PATH SRCTOP OBJROOT WITH_META_MODE WITH_CCACHE_MODE
+	expShellVarsLiteral OBJTOP
+}
+
+freebsd_ports_env_hook() {
+	case "$SB_PROJECT" in
+	FreeBSD-ports) ;;
+	*) return 0;;
+	esac
+
+	PORTSDIR=$SB/ports
+	PORT_DBDIR=$SB/var/db/ports
+	PACKAGES=$SB/pkg
+	WRKDIRPREFIX=$SB/wrkdir
+	DISTDIR=$SB/distfiles
+	SU_CMD="/usr/local/bin/sudo -E sh -c"
+	SRCTOP=$PORTSDIR
+
+	add_hooks mksb_env_finish_hooks freebsd_ports_env_finish_hook
+}
+freebsd_ports_env_finish_hook() {
+	expShellVars PATH PORTSDIR PORT_DBDIR PACKAGES WRKDIRPREFIX DISTDIR SU_CMD
+	expShellVars SRCTOP
+}
+
+add_hooks mksb_env_hooks freebsd_env_hook
+add_hooks mksb_env_hooks freebsd_ports_env_hook
