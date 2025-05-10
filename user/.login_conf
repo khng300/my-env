@@ -1,0 +1,8 @@
+# $FreeBSD$
+#
+# see login.conf(5)
+#
+me:\
+	:lang=en_CA.UTF-8:\
+	:path=~/local/sb-tools ~/.npm/bin ~/local/bin ~/.local/bin /opt/utils/local/bin /sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin ~/bin:\
+	:setenv=EDITOR=nvim:
