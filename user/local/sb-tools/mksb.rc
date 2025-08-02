@@ -1,0 +1,42 @@
+freebsd_env_hook() {
+	case "$SB_PROJECT" in
+	FreeBSD|freebsd) ;;
+	*) return 0;;
+	esac
+
+	add_hooks mksb_env_finish_hooks freebsd_env_finish_hook
+
+	SB_SRC=${SB}/src
+	SRCTOP=${SB_SRC}
+	#SB_OBJROOT=${SB}/obj/
+	MAKESYSPATH=${SRCTOP}/share/mk
+	WITH_META_MODE=yes
+}
+freebsd_env_finish_hook() {
+	expShellVars PATH SRCTOP
+	expShellVars WITH_META_MODE
+}
+
+freebsd_ports_env_hook() {
+	case "$SB_PROJECT" in
+	FreeBSD-ports) ;;
+	*) return 0;;
+	esac
+
+	add_hooks mksb_env_finish_hooks freebsd_ports_env_finish_hook
+
+	PORTSDIR=$SB/ports
+	PORT_DBDIR=$SB/var/db/ports
+	PACKAGES=$SB/pkg
+	WRKDIRPREFIX=$SB/wrkdir
+	DISTDIR=$SB/distfiles
+	SU_CMD="/usr/local/bin/sudo -E sh -c"
+	SRCTOP=$PORTSDIR
+}
+freebsd_ports_env_finish_hook() {
+	expShellVars PATH PORTSDIR PORT_DBDIR PACKAGES WRKDIRPREFIX DISTDIR SU_CMD
+	expShellVars SRCTOP
+}
+
+add_hooks mksb_env_hooks freebsd_env_hook
+add_hooks mksb_env_hooks freebsd_ports_env_hook
